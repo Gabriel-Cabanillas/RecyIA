@@ -1,0 +1,657 @@
+/* ==========================================================================
+   TOKENS DE DISEÑO - ECONOMÍA CIRCULAR Y VISIÓN ARTIFICIAL
+   ========================================================================== */
+:root {
+  /* Superficies y Neutros Cálidos (Evita el blanco clínico o gris genérico) */
+  --bg-canvas: #f4f6f1;
+  --bg-surface: #ffffff;
+  --bg-subtle: #edf1e8;
+  --border-light: #dce3d5;
+  --border-strong: #c2ccb8;
+
+  /* Tipografía */
+  --text-primary: #14261c;
+  --text-secondary: #4a5d52;
+  --text-muted: #76887d;
+
+  /* Marca Principal (Verde Bosque Profundo) */
+  --brand-primary: #1b4332;
+  --brand-accent: #2d6a4f;
+
+  /* Colores Semánticos por Material (Estándar Internacional de Reciclaje) */
+  --cat-plastico: #eab308;
+  --cat-plastico-bg: #fefce8;
+  --cat-plastico-text: #854d0e;
+
+  --cat-papel: #2563eb;
+  --cat-papel-bg: #eff6ff;
+  --cat-papel-text: #1e40af;
+
+  --cat-carton: #b45309;
+  --cat-carton-bg: #fffbeb;
+  --cat-carton-text: #92400e;
+
+  --cat-metal: #64748b;
+  --cat-metal-bg: #f1f5f9;
+  --cat-metal-text: #334155;
+
+  --cat-vidrio: #16a34a;
+  --cat-vidrio-bg: #f0fdf4;
+  --cat-vidrio-text: #166534;
+
+  --cat-organico: #78350f;
+  --cat-organico-bg: #fdf8f6;
+  --cat-organico-text: #5c280b;
+
+  --cat-none: #10b981;
+
+  /* Sombras y Radios */
+  --shadow-sm: 0 2px 8px rgba(20, 38, 28, 0.04);
+  --shadow-md: 0 10px 25px -5px rgba(20, 38, 28, 0.07), 0 4px 10px -6px rgba(20, 38, 28, 0.04);
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   LAYOUT PRINCIPAL
+   ========================================================================== */
+.eco-app {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 28px 40px;
+}
+
+/* Cabecera */
+.eco-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.eco-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.eco-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--brand-primary);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.22);
+}
+
+.eco-brand h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.eco-subtitle {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Pill de Estado del Modelo */
+.eco-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.eco-status-badge.is-ready {
+  color: #166534;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.eco-status-badge.is-ready .status-dot {
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+}
+
+.eco-status-badge.is-loading {
+  color: #92400e;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.eco-status-badge.is-loading .status-dot {
+  background: #f59e0b;
+  animation: pulse 1.4s infinite;
+}
+
+.eco-status-badge.is-error {
+  color: #991b1b;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.eco-status-badge.is-error .status-dot {
+  background: #dc2626;
+}
+
+/* Workspace Grid Asimétrico (60% Visor / 40% Panel de Control) */
+.eco-workspace {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ==========================================================================
+   VISOR DE CÁMARA Y ROI ÓPTICO
+   ========================================================================== */
+.eco-viewport-section {
+  position: sticky;
+  top: 24px;
+}
+
+.viewport-frame {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #0d1612;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-strong);
+}
+
+.viewport-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.viewport-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 48%, rgba(10, 20, 15, 0.45) 100%);
+  pointer-events: none;
+}
+
+/* Región de Interés (Mismas coordenadas: left 20%, top 10%, width 60%, height 80%) */
+.roi-target {
+  position: absolute;
+  left: 20%;
+  top: 10%;
+  width: 60%;
+  height: 80%;
+  border: 2px dashed rgba(255, 255, 255, 0.55);
+  border-radius: 14px;
+  pointer-events: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.roi-target:not(.cat-none) {
+  border-style: solid;
+  border-width: 2.5px;
+  box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.12);
+}
+
+/* Esquinas tipo visor de cámara inteligente */
+.roi-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: #22c55e;
+  border-style: solid;
+  transition: border-color 0.25s ease;
+}
+.roi-corner.tl { top: -2px; left: -2px; border-width: 4px 0 0 4px; border-top-left-radius: 12px; }
+.roi-corner.tr { top: -2px; right: -2px; border-width: 4px 4px 0 0; border-top-right-radius: 12px; }
+.roi-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 4px 4px; border-bottom-left-radius: 12px; }
+.roi-corner.br { bottom: -2px; right: -2px; border-width: 0 4px 4px 0; border-bottom-right-radius: 12px; }
+
+.roi-label {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 28, 21, 0.82);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.viewport-hint {
+  margin: 12px 4px 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ==========================================================================
+   TARJETAS DEL PANEL DERECHO
+   ========================================================================== */
+.eco-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.eco-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.card-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Tarjeta Hero de Resultado */
+.result-card {
+  border-left: 6px solid var(--border-strong);
+  transition: all 0.25s ease;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.result-eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.result-confidence {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.result-title {
+  margin: 0 0 10px;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.result-guidance {
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.result-guidance strong {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+
+.result-guidance p {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.result-placeholder {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   LISTA DE PROBABILIDADES (BARRAS EN TIEMPO REAL)
+   ========================================================================== */
+.prob-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.prob-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.86rem;
+  margin-bottom: 5px;
+}
+
+.prob-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.prob-item.is-active .prob-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.prob-score {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.prob-item.is-active .prob-score {
+  color: var(--text-primary);
+}
+
+.prob-track {
+  height: 8px;
+  background: var(--bg-subtle);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.prob-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.14s ease-out;
+  background: var(--border-strong);
+}
+
+.empty-state {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   ESTADÍSTICAS (CUADRÍCULA DE MÉTRICAS)
+   ========================================================================== */
+.total-pill {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  background: var(--brand-primary);
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.total-pill strong {
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-grid {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.stat-tile {
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 11px 12px;
+}
+
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.stat-pct {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.stat-mini-bar {
+  height: 4px;
+  background: var(--border-light);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.stat-mini-bar > div {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* Botón de Reinicio (Secundario y Seguro) */
+.eco-btn-reset {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eco-btn-reset:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.eco-btn-reset:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   MAPEO DE COLORES POR CATEGORÍA DE RECICLAJE
+   ========================================================================== */
+.cat-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Plástico - Amarillo */
+.cat-plastico .cat-dot,
+.cat-plastico .prob-fill,
+.cat-plastico .stat-mini-bar > div { background: var(--cat-plastico); }
+.roi-target.cat-plastico,
+.roi-target.cat-plastico .roi-corner { border-color: var(--cat-plastico); }
+.result-card.cat-plastico {
+  background: var(--cat-plastico-bg);
+  border-left-color: var(--cat-plastico);
+  color: var(--cat-plastico-text);
+}
+.result-card.cat-plastico .result-title { color: var(--cat-plastico-text); }
+
+/* Papel - Azul */
+.cat-papel .cat-dot,
+.cat-papel .prob-fill,
+.cat-papel .stat-mini-bar > div { background: var(--cat-papel); }
+.roi-target.cat-papel,
+.roi-target.cat-papel .roi-corner { border-color: var(--cat-papel); }
+.result-card.cat-papel {
+  background: var(--cat-papel-bg);
+  border-left-color: var(--cat-papel);
+  color: var(--cat-papel-text);
+}
+.result-card.cat-papel .result-title { color: var(--cat-papel-text); }
+
+/* Cartón - Ámbar / Kraft */
+.cat-carton .cat-dot,
+.cat-carton .prob-fill,
+.cat-carton .stat-mini-bar > div { background: var(--cat-carton); }
+.roi-target.cat-carton,
+.roi-target.cat-carton .roi-corner { border-color: var(--cat-carton); }
+.result-card.cat-carton {
+  background: var(--cat-carton-bg);
+  border-left-color: var(--cat-carton);
+  color: var(--cat-carton-text);
+}
+.result-card.cat-carton .result-title { color: var(--cat-carton-text); }
+
+/* Metal - Gris Acero */
+.cat-metal .cat-dot,
+.cat-metal .prob-fill,
+.cat-metal .stat-mini-bar > div { background: var(--cat-metal); }
+.roi-target.cat-metal,
+.roi-target.cat-metal .roi-corner { border-color: var(--cat-metal); }
+.result-card.cat-metal {
+  background: var(--cat-metal-bg);
+  border-left-color: var(--cat-metal);
+  color: var(--cat-metal-text);
+}
+.result-card.cat-metal .result-title { color: var(--cat-metal-text); }
+
+/* Vidrio - Verde Esmeralda */
+.cat-vidrio .cat-dot,
+.cat-vidrio .prob-fill,
+.cat-vidrio .stat-mini-bar > div { background: var(--cat-vidrio); }
+.roi-target.cat-vidrio,
+.roi-target.cat-vidrio .roi-corner { border-color: var(--cat-vidrio); }
+.result-card.cat-vidrio {
+  background: var(--cat-vidrio-bg);
+  border-left-color: var(--cat-vidrio);
+  color: var(--cat-vidrio-text);
+}
+.result-card.cat-vidrio .result-title { color: var(--cat-vidrio-text); }
+
+/* Orgánico - Marrón Composta */
+.cat-organico .cat-dot,
+.cat-organico .prob-fill,
+.cat-organico .stat-mini-bar > div { background: var(--cat-organico); }
+.roi-target.cat-organico,
+.roi-target.cat-organico .roi-corner { border-color: var(--cat-organico); }
+.result-card.cat-organico {
+  background: var(--cat-organico-bg);
+  border-left-color: var(--cat-organico);
+  color: var(--cat-organico-text);
+}
+.result-card.cat-organico .result-title { color: var(--cat-organico-text); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ==========================================================================
+   RESPONSIVE (TABLETS Y MÓVILES)
+   ========================================================================== */
+@media (max-width: 920px) {
+  .eco-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .eco-viewport-section {
+    position: static;
+  }
+}
+
+@media (max-width: 540px) {
+  .eco-app {
+    padding: 16px;
+  }
+
+  .eco-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

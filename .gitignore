@@ -1,0 +1,8 @@
+﻿venv/
+.venv/
+__pycache__/
+node_modules/
+dist/
+dataset/
+dataset_split/
+modelo/exported_model*/
